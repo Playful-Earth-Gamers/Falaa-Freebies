@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Falaa Freebies - Give Freely. Receive Joy. Build Community.</title>
+    <title>Falaa Freebies™ | The Global Marketplace for Free Goods, Donations & Community Connections</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -123,13 +123,15 @@
         <header id="app-header" class="sticky top-0 z-40 bg-navy-900/80 backdrop-blur-xl border-b border-slate-800 px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <!-- Logo Asset folder path: assets/logo/logo.png -->
-                <img src="assets/logo/logo.png" alt="Falaa Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-emerald-500/30 border border-emerald-500/30" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <img src="assets/logo/logo.jpg" alt="Falaa Freebies Official Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-emerald-500/30 border border-emerald-500/30" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 hidden items-center justify-center shadow-lg shadow-emerald-500/30 text-navy-950 font-bold text-xl">
                     <i class="fa-solid fa-gift"></i>
                 </div>
                 <div>
-                    <h1 class="font-heading font-bold text-lg leading-tight tracking-wide text-white">Falaa Freebies</h1>
-                    <p class="text-xs text-emerald-400 font-medium">Give Freely. Receive Joy.</p>
+                    <h1 class="font-heading font-bold text-lg leading-tight tracking-wide text-white">Falaa® Freebies</h1>
+                    <p class="text-xs text-emerald-400 font-medium">
+    Empowering Global Giving. Connecting Communities.
+                    </p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -156,22 +158,22 @@
             </button>
             <button onclick="switchScreen('discover')" data-nav="discover" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
                 <i class="fa-solid fa-compass text-lg mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Discover</span>
+                <span class="text-[10px] font-medium tracking-wide">Browse</span>
             </button>
             <button onclick="switchScreen('community')" data-nav="community" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
                 <i class="fa-solid fa-users text-lg mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Community</span>
+                <span class="text-[10px] font-medium tracking-wide">Global Community Hub</span>
             </button>
             <button onclick="switchScreen('post')" data-nav="post" class="relative -top-4 w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-400 text-navy-950 flex items-center justify-center shadow-xl shadow-emerald-500/40 hover:scale-105 transition transform">
                 <i class="fa-solid fa-plus text-xl font-bold"></i>
             </button>
             <button onclick="switchScreen('messages')" data-nav="messages" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
                 <i class="fa-solid fa-comments text-lg mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Chat</span>
+                <span class="text-[10px] font-medium tracking-wide">Inbox</span>
             </button>
             <button onclick="switchScreen('profile')" data-nav="profile" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
                 <i class="fa-solid fa-user text-lg mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Profile</span>
+                <span class="text-[10px] font-medium tracking-wide">My Account</span>
             </button>
         </nav>
 
@@ -184,7 +186,9 @@
         import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
-
+        import { setPersistence, browserLocalPersistence } 
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        
         const firebaseConfig = {
             apiKey: "AIzaSyActualConfigKeyPlaceholder",
             authDomain: "falaa-freebies.firebaseapp.com",
@@ -210,9 +214,8 @@
                 }
             });
         } catch(e) {
-            console.log("Firebase initialized successfully with modular SDK v12.1.0.");
-        }
-
+    console.error("Firebase initialization failed:", e);
+}
         window.fbAuth = {
             googleLogin: async () => {
                 const provider = new GoogleAuthProvider();
@@ -545,9 +548,9 @@
                             <div>
                                 <h4 class="font-heading font-bold text-sm text-slate-300 mb-3">Categories & Quick Access</h4>
                                 <div class="grid grid-cols-4 gap-3 text-center">
-                                    ${renderCategoryItem('📱', 'Electronics', 'discover')}
-                                    ${renderCategoryItem('🛋', 'Furniture', 'discover')}
-                                    ${renderCategoryItem('🤝', 'Community', 'community')}
+                                    ${renderCategoryItem('📱', 'Electronics', 'browse')}
+                                    ${renderCategoryItem('🛋', 'Furniture', 'browse')}
+                                    ${renderCategoryItem('🤝', 'Global Community Hub', 'global community hub')}
                                     ${renderCategoryItem('📦', 'Shipping', 'international')}
                                 </div>
                             </div>
