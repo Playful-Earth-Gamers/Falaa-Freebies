@@ -108,7 +108,7 @@
 </head>
 <body class="bg-navy-950 text-slate-100 min-h-screen relative selection:bg-emerald-500 selection:text-white">
 
-    <!-- Background Video Asset -->
+    <!-- Background Video Asset (Asset folder path: assets/videos/background.mp4) -->
     <video autoplay muted loop playsinline class="bg-video-container">
         <source src="assets/videos/background.mp4" type="video/mp4">
     </video>
@@ -122,6 +122,7 @@
         <!-- Top Header Navigation Bar -->
         <header id="app-header" class="sticky top-0 z-40 bg-navy-900/80 backdrop-blur-xl border-b border-slate-800 px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
+                <!-- Logo Asset folder path: assets/logo/logo.png -->
                 <img src="assets/logo/logo.png" alt="Falaa Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-emerald-500/30 border border-emerald-500/30" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 hidden items-center justify-center shadow-lg shadow-emerald-500/30 text-navy-950 font-bold text-xl">
                     <i class="fa-solid fa-gift"></i>
@@ -157,12 +158,16 @@
                 <i class="fa-solid fa-compass text-lg mb-1"></i>
                 <span class="text-[10px] font-medium tracking-wide">Discover</span>
             </button>
-            <button onclick="switchScreen('post')" data-nav="post" class="relative -top-4 w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-400 text-navy-950 flex items-center justify-center shadow-xl shadow-emerald-500/40 hover:scale-105 transition transform">
-                <i class="fa-solid fa-plus text-2xl font-bold"></i>
+            <button onclick="switchScreen('community')" data-nav="community" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
+                <i class="fa-solid fa-users text-lg mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Community</span>
+            </button>
+            <button onclick="switchScreen('post')" data-nav="post" class="relative -top-4 w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-400 text-navy-950 flex items-center justify-center shadow-xl shadow-emerald-500/40 hover:scale-105 transition transform">
+                <i class="fa-solid fa-plus text-xl font-bold"></i>
             </button>
             <button onclick="switchScreen('messages')" data-nav="messages" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
                 <i class="fa-solid fa-comments text-lg mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Messages</span>
+                <span class="text-[10px] font-medium tracking-wide">Chat</span>
             </button>
             <button onclick="switchScreen('profile')" data-nav="profile" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
                 <i class="fa-solid fa-user text-lg mb-1"></i>
@@ -205,46 +210,30 @@
                 }
             });
         } catch(e) {
-            console.log("Firebase initialization initialized successfully with modular SDK v12.1.0.");
+            console.log("Firebase initialized successfully with modular SDK v12.1.0.");
         }
 
         window.fbAuth = {
             googleLogin: async () => {
-                try {
-                    const provider = new GoogleAuthProvider();
-                    const res = await signInWithPopup(auth, provider);
-                    showToast("Successfully logged in with Google!");
-                    switchScreen('home');
-                } catch(err) {
-                    showToast("Google Authentication active. Please configure Firebase Console.");
-                }
+                const provider = new GoogleAuthProvider();
+                const res = await signInWithPopup(auth, provider);
+                showToast("Successfully logged in with Google!");
+                switchScreen('home');
             },
             emailLogin: async (email, password) => {
-                try {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    showToast("Welcome back!");
-                    switchScreen('home');
-                } catch(err) {
-                    showToast("Authentication error. Please check credentials.");
-                }
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast("Welcome back!");
+                switchScreen('home');
             },
             emailSignup: async (email, password) => {
-                try {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                    showToast("Account created successfully!");
-                    switchScreen('home');
-                } catch(err) {
-                    showToast("Signup error. Please try again.");
-                }
+                await createUserWithEmailAndPassword(auth, email, password);
+                showToast("Account created successfully!");
+                switchScreen('home');
             },
             logout: async () => {
-                try {
-                    await signOut(auth);
-                    showToast("Logged out successfully.");
-                    switchScreen('welcome');
-                } catch(err) {
-                    switchScreen('welcome');
-                }
+                await signOut(auth);
+                showToast("Logged out successfully.");
+                switchScreen('welcome');
             },
             uploadFile: async (file) => {
                 if(!storage) return URL.createObjectURL(file);
@@ -352,7 +341,39 @@
                 { id: 4, title: 'Canon DSLR Camera', category: 'Electronics', condition: 'Like New', distance: 'International', time: '3 hours ago', price: 'FREE', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80', description: 'Canon DSLR with 18-55mm lens. Shipping available worldwide.', location: 'London, UK', donor: 'David Miller', shipping: true, shippingCost: '$15' }
             ],
             communityPosts: [
-                { id: 1, author: 'James Anderson', location: 'Accra, Ghana', time: '2h ago', verified: true, title: 'Need help for my little sister’s school fees.', desc: 'I am seeking support to pay my little sister’s school fees. Thank you! 🙏', category: 'Emergency Help', comments: 12, supporters: 34, image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80' }
+                { 
+                    id: 1, 
+                    author: 'James Anderson', 
+                    location: 'Accra, Ghana', 
+                    time: '2h ago', 
+                    verified: true, 
+                    title: 'Need help for my little sister’s school fees & books.', 
+                    desc: 'I am seeking support to pay my little sister’s school fees and obtain basic textbooks for the term. Any small contribution helps tremendously. Thank you and God bless! 🙏', 
+                    category: 'Education Support', 
+                    commentsCount: 3, 
+                    supporters: 14, 
+                    image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80',
+                    comments: [
+                        { author: 'Sarah Johnson', text: 'Sent you a DM! I have some extra notebooks and can assist.', time: '1h ago' },
+                        { author: 'Michael Osei', text: 'Stay strong brother, checking how I can help out.', time: '45m ago' }
+                    ]
+                },
+                { 
+                    id: 2, 
+                    author: 'Amina Bello', 
+                    location: 'Kumasi, Ghana', 
+                    time: '5h ago', 
+                    verified: true, 
+                    title: 'Giving out warm winter clothes & blankets for families in need', 
+                    desc: 'Hello everyone! We have clean winter jackets, sweaters, and woolen blankets available for free pickup or community delivery.', 
+                    category: 'Clothing & Warmth', 
+                    commentsCount: 2, 
+                    supporters: 28, 
+                    image: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=600&q=80',
+                    comments: [
+                        { author: 'Grace Mensah', text: 'God bless you abundantly Amina!', time: '3h ago' }
+                    ]
+                }
             ]
         };
 
@@ -394,14 +415,33 @@
 
         function renderScreenHTML(screen) {
             const trustFooter = `
-                <div class="mt-8 pt-6 border-t border-slate-800 text-center space-y-3 px-2 pb-4">
-                    <div class="flex items-center justify-center space-x-4 text-emerald-400 text-xs">
-                        <span><i class="fa-solid fa-shield-halved mr-1"></i> Verified Safe</span>
-                        <span><i class="fa-solid fa-lock mr-1"></i> Firebase Secured</span>
-                        <span><i class="fa-solid fa-globe mr-1"></i> Global Scale</span>
+                <div class="mt-8 pt-6 border-t border-slate-800 text-center space-y-4 px-2 pb-6">
+                    <!-- Trust Companies Logos Section -->
+                    <div>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mb-3">Secured & Powered In Partnership With</p>
+                        <div class="flex items-center justify-center space-x-5 opacity-75 grayscale hover:grayscale-0 transition">
+                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">🛡️ FIREBASE</span>
+                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">📦 DHL GLOBAL</span>
+                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">🔒 STRIPE ESCROW</span>
+                        </div>
                     </div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">
-                        Notice: After fully production launch, all transactions, real-time item syncing, and global shipping escrows will be fully live and operational worldwide.
+
+                    <div class="flex flex-wrap justify-center gap-3 text-[11px] text-emerald-400 pt-2">
+                        <button onclick="switchScreen('about')" class="hover:underline">About</button>
+                        <span>•</span>
+                        <button onclick="switchScreen('privacy')" class="hover:underline">Privacy</button>
+                        <span>•</span>
+                        <button onclick="switchScreen('policies')" class="hover:underline">Policies</button>
+                        <span>•</span>
+                        <button onclick="switchScreen('shipment')" class="hover:underline">Shipment</button>
+                        <span>•</span>
+                        <button onclick="switchScreen('donation')" class="hover:underline">Donation</button>
+                        <span>•</span>
+                        <button onclick="switchScreen('community')" class="hover:underline">Community</button>
+                    </div>
+
+                    <p class="text-[11px] text-slate-400 leading-relaxed px-4">
+                        <strong>Production Notice:</strong> After full production launch, all live item syncing, instant messaging, global shipping logistics, and escrow accounts will be completely active worldwide.
                     </p>
                     <p class="text-[10px] text-slate-500 font-mono">© 2026 Falaa Freebies Platform. All rights reserved.</p>
                 </div>
@@ -438,7 +478,7 @@
                                     <div class="absolute inset-0 bg-gradient-to-t from-navy-950 via-transparent to-transparent"></div>
                                 </div>
                                 <h2 class="font-heading font-bold text-2xl text-white mb-2">Give. Receive. Help. Repeat.</h2>
-                                <p class="text-slate-300 text-sm">Join a community that cares and shares free resources everyday.</p>
+                                <p class="text-slate-300 text-sm">Join a global community that shares free items, emergency support, and pure kindness everyday.</p>
                             </div>
                             <div class="space-y-3 pb-8">
                                 <button onclick="switchScreen('auth-signup')" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-navy-950 font-bold font-heading shadow-lg shadow-emerald-500/30 hover:scale-[1.02] transition">Create Account</button>
@@ -489,26 +529,26 @@
                         <div class="p-4 space-y-6">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <h2 class="text-slate-400 text-xs">👋 Good Morning</h2>
+                                    <h2 class="text-slate-400 text-xs">👋 Welcome to Falaa</h2>
                                     <h3 class="font-heading font-bold text-xl text-white">Find something useful today.</h3>
                                 </div>
                                 <div class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-medium">
-                                    <i class="fa-solid fa-location-dot mr-1"></i> Accra
+                                    <i class="fa-solid fa-location-dot mr-1"></i> Global Hub
                                 </div>
                             </div>
 
                             <div class="relative">
                                 <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
-                                <input type="text" placeholder="Search free phones, furniture..." class="w-full bg-slate-800/80 border border-slate-700 rounded-2xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+                                <input type="text" placeholder="Search free phones, furniture, books..." class="w-full bg-slate-800/80 border border-slate-700 rounded-2xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500">
                             </div>
 
                             <div>
-                                <h4 class="font-heading font-bold text-sm text-slate-300 mb-3">Categories</h4>
+                                <h4 class="font-heading font-bold text-sm text-slate-300 mb-3">Categories & Quick Access</h4>
                                 <div class="grid grid-cols-4 gap-3 text-center">
                                     ${renderCategoryItem('📱', 'Electronics', 'discover')}
                                     ${renderCategoryItem('🛋', 'Furniture', 'discover')}
-                                    ${renderCategoryItem('👕', 'Clothing', 'discover')}
-                                    ${renderCategoryItem('🍲', 'Kitchen', 'discover')}
+                                    ${renderCategoryItem('🤝', 'Community', 'community')}
+                                    ${renderCategoryItem('📦', 'Shipping', 'international')}
                                 </div>
                             </div>
 
@@ -562,6 +602,76 @@
                                             <div class="flex items-center justify-between mt-2 text-[11px] text-slate-500">
                                                 <span><i class="fa-solid fa-location-dot mr-1"></i>${item.location}</span>
                                                 <span>${item.time}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'community':
+                    return `
+                        <div class="p-4 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-white">🤝 Community Center</h3>
+                                    <p class="text-xs text-slate-400">Post requests, offer help, and support neighbors</p>
+                                </div>
+                                <button onclick="openNewCommunityPostModal()" class="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-navy-950 font-bold text-xs rounded-xl shadow-lg shadow-emerald-500/30">
+                                    <i class="fa-solid fa-pen-to-square mr-1"></i> New Post
+                                </button>
+                            </div>
+
+                            <div class="space-y-4">
+                                ${appData.communityPosts.map(post => `
+                                    <div class="glass-panel p-4 rounded-3xl space-y-3">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-2.5">
+                                                <div class="w-10 h-10 rounded-full bg-emerald-600/20 text-emerald-400 font-bold flex items-center justify-center text-sm border border-emerald-500/30">
+                                                    ${post.author.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <div class="flex items-center space-x-1">
+                                                        <h5 class="font-heading font-bold text-sm text-white">${post.author}</h5>
+                                                        ${post.verified ? '<i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i>' : ''}
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-400"><i class="fa-solid fa-location-dot mr-1"></i>${post.location} • ${post.time}</p>
+                                                </div>
+                                            </div>
+                                            <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 font-medium text-[10px] rounded-full border border-emerald-500/30">${post.category}</span>
+                                        </div>
+
+                                        <h4 class="font-heading font-bold text-sm text-white">${post.title}</h4>
+                                        <p class="text-xs text-slate-300 leading-relaxed">${post.desc}</p>
+                                        
+                                        ${post.image ? `<div class="w-full h-44 rounded-2xl overflow-hidden"><img src="${post.image}" class="w-full h-full object-cover"></div>` : ''}
+
+                                        <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-400">
+                                            <button onclick="showToast('You pledged support for this post!')" class="flex items-center space-x-1.5 text-emerald-400 font-semibold hover:underline">
+                                                <i class="fa-solid fa-hands-holding-child"></i>
+                                                <span>Support (${post.supporters})</span>
+                                            </button>
+                                            <button onclick="toggleComments(${post.id})" class="flex items-center space-x-1.5 hover:text-white">
+                                                <i class="fa-regular fa-comment"></i>
+                                                <span>Comments (${post.comments.length})</span>
+                                            </button>
+                                        </div>
+
+                                        <!-- Comments Section -->
+                                        <div id="comments-box-${post.id}" class="space-y-2 pt-3 border-t border-slate-800/80">
+                                            ${post.comments.map(c => `
+                                                <div class="bg-navy-950/60 p-2.5 rounded-xl text-xs space-y-1">
+                                                    <div class="flex justify-between font-semibold text-slate-200">
+                                                        <span>${c.author}</span>
+                                                        <span class="text-[10px] text-slate-500">${c.time}</span>
+                                                    </div>
+                                                    <p class="text-slate-300">${c.text}</p>
+                                                </div>
+                                            `).join('')}
+                                            <div class="flex space-x-2 pt-1">
+                                                <input type="text" id="comment-input-${post.id}" placeholder="Write a supportive comment..." class="flex-1 bg-navy-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                                                <button onclick="addCommunityComment(${post.id})" class="px-3 py-2 bg-emerald-600 text-navy-950 font-bold rounded-xl text-xs">Send</button>
                                             </div>
                                         </div>
                                     </div>
@@ -723,16 +833,38 @@
                             <div class="glass-card p-3 rounded-2xl flex items-center space-x-3">
                                 <i class="fa-solid fa-bell text-emerald-400 text-lg"></i>
                                 <div class="flex-1">
-                                    <h5 class="font-heading font-bold text-xs text-white">Sarah requested your laptop.</h5>
+                                    <h5 class="font-heading font-bold text-xs text-white">Sarah requested your item.</h5>
                                     <span class="text-[10px] text-slate-400">2m ago</span>
                                 </div>
                             </div>
                             ${trustFooter}
                         </div>
                     `;
+                case 'about':
+                    return renderStaticPage('About Falaa Freebies', 'Falaa Freebies is a peer-to-peer sharing and community support platform built to encourage giving without monetary barriers. Our mission is to reduce waste, foster kindness, and connect people willing to share free items or emergency support with those who need them most.');
+                case 'privacy':
+                    return renderStaticPage('Privacy Policy', 'We take your privacy seriously. All data transmitted through Firebase authentication and Firestore is securely encrypted. We never sell or share your personal information with third parties without direct user consent.');
+                case 'policies':
+                    return renderStaticPage('Community Policies', '1. All items and services shared must be 100% free of charge.\n2. Respect all members across chats and community comments.\n3. Zero tolerance for scams, fraudulent posts, or misleading information.');
+                case 'shipment':
+                    return renderStaticPage('Shipment & Logistics', 'International freebies utilize secure shipping escrows partnered with trusted global couriers like DHL and FedEx. Donors or recipients cover standard courier fees while item costs remain completely free.');
+                case 'donation':
+                    return renderStaticPage('Donation Guidelines', 'You can give away electronics, clothing, books, furniture, or offer direct emergency community assistance. Ensure items are clean and accurately described before posting.');
                 default:
                     return `<div class="p-6 text-center">Screen under construction</div>`;
             }
+        }
+
+        function renderStaticPage(title, bodyText) {
+            return `
+                <div class="p-4 space-y-4">
+                    <button onclick="switchScreen('home')" class="text-xs text-slate-400"><i class="fa-solid fa-arrow-left mr-1"></i> Back Home</button>
+                    <div class="glass-panel p-5 rounded-3xl space-y-3">
+                        <h3 class="font-heading font-bold text-xl text-white">${title}</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed whitespace-pre-line">${bodyText}</p>
+                    </div>
+                </div>
+            `;
         }
 
         function renderCategoryItem(icon, label, target) {
@@ -762,6 +894,76 @@
                     <button onclick="showToast('Request sent successfully to donor!')" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-navy-950 font-bold font-heading shadow-lg shadow-emerald-500/30">Request Item Free</button>
                 </div>
             `;
+        }
+
+        function toggleComments(postId) {
+            const box = document.getElementById(`comments-box-${postId}`);
+            if(box) {
+                box.classList.toggle('hidden');
+            }
+        }
+
+        function addCommunityComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            if(input && input.value.trim() !== '') {
+                const post = appData.communityPosts.find(p => p.id === postId);
+                post.comments.push({ author: appData.user.name, text: input.value, time: 'Just now' });
+                showToast("Comment posted successfully!");
+                switchScreen('community');
+            }
+        }
+
+        function openNewCommunityPostModal() {
+            const viewport = document.getElementById('main-viewport');
+            viewport.innerHTML = `
+                <div class="p-4 space-y-4">
+                    <button onclick="switchScreen('community')" class="text-xs text-slate-400"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button>
+                    <div class="glass-panel p-5 rounded-3xl space-y-4">
+                        <h3 class="font-heading font-bold text-lg text-white">Create Community Request</h3>
+                        <form onsubmit="handleCommunityPostSubmit(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">Title</label>
+                                <input type="text" id="comm-title" required class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white" placeholder="e.g. Assistance needed for school books">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
+                                <select id="comm-category" class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                                    <option>Education Support</option>
+                                    <option>Clothing & Warmth</option>
+                                    <option>Emergency Help</option>
+                                    <option>Medical Assistance</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">Description</label>
+                                <textarea id="comm-desc" rows="4" required class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white" placeholder="Describe how the community can help..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 rounded-xl bg-emerald-600 text-navy-950 font-bold text-xs">Publish Request</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleCommunityPostSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('comm-title').value;
+            const category = document.getElementById('comm-category').value;
+            const desc = document.getElementById('comm-desc').value;
+            appData.communityPosts.unshift({
+                id: Date.now(),
+                author: appData.user.name,
+                location: 'Accra, Ghana',
+                time: 'Just now',
+                verified: true,
+                title,
+                desc,
+                category,
+                supporters: 1,
+                comments: []
+            });
+            showToast("Community request posted successfully!");
+            switchScreen('community');
         }
 
         function handleAuthSubmit(e, isLogin) {
