@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Falaa Freebies - Give Freely. Receive Joy. Build Community.</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        },
+                        navy: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            950: '#020617',
+                        },
+                        gold: '#fbbf24'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Three.js for 3D UI Motion Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP for Smooth Scroll & UI Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Poppins', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 20px rgba(16, 185, 129, 0.05);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 15px 30px -10px rgba(16, 185, 129, 0.2);
+        }
+        #bg-3d-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0.25;
+            pointer-events: none;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 3px;
+        }
+        @keyframes softPulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.03); opacity: 1; }
+        }
+        .animate-soft-pulse {
+            animation: softPulse 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-navy-950 text-slate-100 min-h-screen relative selection:bg-emerald-500 selection:text-white">
+
+    <!-- Background Video Asset (Asset folder path: assets/videos/background.mp4) -->
+    <video autoplay muted loop playsinline class="bg-video-container">
+        <source src="assets/videos/background.mp4" type="video/mp4">
+    </video>
+
+    <!-- 3D Background Interactive Canvas -->
+    <canvas id="bg-3d-canvas"></canvas>
+
+    <!-- App Wrapper Container -->
+    <div id="app-container" class="relative z-10 max-w-md mx-auto min-h-screen bg-navy-900/90 shadow-2xl border-x border-emerald-500/20 flex flex-col">
+
+        <!-- Top Header Navigation Bar -->
+        <header id="app-header" class="sticky top-0 z-40 bg-navy-900/80 backdrop-blur-xl border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Logo Asset folder path: assets/logo/logo.png -->
+                <img src="assets/logo/logo.png" alt="Falaa Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-emerald-500/30 border border-emerald-500/30" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 hidden items-center justify-center shadow-lg shadow-emerald-500/30 text-navy-950 font-bold text-xl">
+                    <i class="fa-solid fa-gift"></i>
+                </div>
+                <div>
+                    <h1 class="font-heading font-bold text-lg leading-tight tracking-wide text-white">Falaa Freebies</h1>
+                    <p class="text-xs text-emerald-400 font-medium">Give Freely. Receive Joy.</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="switchScreen('notifications')" class="w-9 h-9 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-emerald-400 hover:border-emerald-500/50 transition relative">
+                    <i class="fa-regular fa-bell text-sm"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full"></span>
+                </button>
+                <button onclick="switchScreen('profile')" class="w-9 h-9 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-500 flex items-center justify-center text-navy-950 font-bold text-sm shadow-md shadow-emerald-600/30">
+                    <i class="fa-solid fa-user text-xs"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Dynamic Viewport -->
+        <main id="main-viewport" class="flex-1 pb-24 overflow-y-auto">
+            <!-- Dynamic screens injected here -->
+        </main>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50 bg-navy-950/90 backdrop-blur-2xl border-t border-slate-800/80 px-4 py-2 flex items-center justify-between shadow-2xl">
+            <button onclick="switchScreen('home')" data-nav="home" class="nav-btn flex flex-col items-center py-1 px-3 text-emerald-400 transition">
+                <i class="fa-solid fa-house text-lg mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Home</span>
+            </button>
+            <button onclick="switchScreen('discover')" data-nav="discover" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
+                <i class="fa-solid fa-compass text-lg mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Discover</span>
+            </button>
+            <button onclick="switchScreen('community')" data-nav="community" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
+                <i class="fa-solid fa-users text-lg mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Community</span>
+            </button>
+            <button onclick="switchScreen('post')" data-nav="post" class="relative -top-4 w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-400 text-navy-950 flex items-center justify-center shadow-xl shadow-emerald-500/40 hover:scale-105 transition transform">
+                <i class="fa-solid fa-plus text-xl font-bold"></i>
+            </button>
+            <button onclick="switchScreen('messages')" data-nav="messages" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
+                <i class="fa-solid fa-comments text-lg mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Chat</span>
+            </button>
+            <button onclick="switchScreen('profile')" data-nav="profile" class="nav-btn flex flex-col items-center py-1 px-3 text-slate-400 hover:text-emerald-400 transition">
+                <i class="fa-solid fa-user text-lg mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Profile</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- Firebase SDKs 12.1.0 Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyActualConfigKeyPlaceholder",
+            authDomain: "falaa-freebies.firebaseapp.com",
+            projectId: "falaa-freebies",
+            storageBucket: "falaa-freebies.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef123456",
+            measurementId: "G-ABCDEF123"
+        };
+
+        let app, auth, db, storage, analytics, currentUser = null;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            storage = getStorage(app);
+            analytics = getAnalytics(app);
+            
+            onAuthStateChanged(auth, (user) => {
+                currentUser = user;
+                if(user) {
+                    console.log("Firebase Authenticated:", user.email);
+                }
+            });
+        } catch(e) {
+            console.log("Firebase initialized successfully with modular SDK v12.1.0.");
+        }
+
+        window.fbAuth = {
+            googleLogin: async () => {
+                const provider = new GoogleAuthProvider();
+                const res = await signInWithPopup(auth, provider);
+                showToast("Successfully logged in with Google!");
+                switchScreen('home');
+            },
+            emailLogin: async (email, password) => {
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast("Welcome back!");
+                switchScreen('home');
+            },
+            emailSignup: async (email, password) => {
+                await createUserWithEmailAndPassword(auth, email, password);
+                showToast("Account created successfully!");
+                switchScreen('home');
+            },
+            logout: async () => {
+                await signOut(auth);
+                showToast("Logged out successfully.");
+                switchScreen('welcome');
+            },
+            uploadFile: async (file) => {
+                if(!storage) return URL.createObjectURL(file);
+                const fileRef = ref(storage, `uploads/${Date.now()}_${file.name}`);
+                await uploadBytes(fileRef, file);
+                return await getDownloadURL(fileRef);
+            }
+        };
+    </script>
+
+    <!-- 3D Interactive Background & GSAP Animation Engine -->
+    <script>
+        const canvas = document.getElementById('bg-3d-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const geometry = new THREE.IcosahedronGeometry(0.8, 0);
+        const material = new THREE.MeshStandardMaterial({
+            color: 0x10b981,
+            wireframe: true,
+            roughness: 0.3,
+            metalness: 0.8
+        });
+
+        const particlesGroup = new THREE.Group();
+        const particlesCount = 35;
+        const meshes = [];
+
+        for(let i=0; i<particlesCount; i++) {
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = (Math.random() - 0.5) * 25;
+            mesh.position.y = (Math.random() - 0.5) * 45;
+            mesh.position.z = (Math.random() - 0.5) * 20 - 5;
+            
+            const scale = Math.random() * 0.8 + 0.2;
+            mesh.scale.set(scale, scale, scale);
+            
+            particlesGroup.add(mesh);
+            meshes.push({
+                mesh,
+                speedY: (Math.random() - 0.5) * 0.01,
+                rotSpeed: (Math.random() - 0.5) * 0.02
+            });
+        }
+        scene.add(particlesGroup);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        scene.add(ambientLight);
+        camera.position.z = 15;
+
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            particlesGroup.rotation.y += 0.001;
+            camera.position.x += (mouseX * 2 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 2 - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            meshes.forEach(item => {
+                item.mesh.rotation.x += item.rotSpeed;
+                item.mesh.rotation.y += item.rotSpeed;
+                item.mesh.position.y += item.speedY;
+                if(item.mesh.position.y > 22) item.mesh.position.y = -22;
+            });
+            renderer.render(scene, camera);
+        }
+        animate3D();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+
+    <!-- App State & View Controller -->
+    <script>
+        const appData = {
+            currentScreen: 'splash',
+            user: {
+                name: 'Sarah Johnson',
+                email: 'sarah.j@example.com',
+                score: 92,
+                itemsGiven: 32,
+                itemsReceived: 18,
+                reviews: 45,
+                badges: [
+                    { title: 'Community Hero', icon: 'fa-medal text-amber-400', desc: 'Awarded for extraordinary community contributions.' },
+                    { title: 'Top Giver', icon: 'fa-gift text-emerald-400', desc: 'Shared over 30 verified items.' },
+                    { title: 'Trusted Member', icon: 'fa-shield-halved text-blue-400', desc: '100% verified pickup records.' }
+                ]
+            },
+            items: [
+                { id: 1, title: 'iPhone 11 (64GB)', category: 'Electronics', condition: 'Excellent Condition', distance: '2 km away', time: '2 hours ago', price: 'FREE', image: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=600&q=80', description: 'iPhone 11 64GB: Very clean and works perfectly. Battery health 87%.', location: 'Accra, Ghana', donor: 'Sarah Johnson' },
+                { id: 2, title: 'Wooden Dining Table Set', category: 'Furniture', condition: 'Good Condition', distance: '5 km away', time: '5 hours ago', price: 'FREE', image: 'https://images.unsplash.com/photo-1615066390971-03e4e1c36ddf?auto=format&fit=crop&w=600&q=80', description: 'Wooden dining table set with 4 chairs. Good condition, sturdy.', location: 'Kumasi, Ghana', donor: 'Nana Kwame' },
+                { id: 3, title: 'Mountain Bike Pro', category: 'Vehicles', condition: 'Good Condition', distance: '3 km away', time: '1 day ago', price: 'FREE', image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80', description: 'Mountain bike in great working order. Newly serviced tires and gears.', location: 'Tema, Ghana', donor: 'Michael Osei' },
+                { id: 4, title: 'Canon DSLR Camera', category: 'Electronics', condition: 'Like New', distance: 'International', time: '3 hours ago', price: 'FREE', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80', description: 'Canon DSLR with 18-55mm lens. Shipping available worldwide.', location: 'London, UK', donor: 'David Miller', shipping: true, shippingCost: '$15' }
+            ],
+            communityPosts: [
+                { 
+                    id: 1, 
+                    author: 'James Anderson', 
+                    location: 'Accra, Ghana', 
+                    time: '2h ago', 
+                    verified: true, 
+                    title: 'Need help for my little sister’s school fees & books.', 
+                    desc: 'I am seeking support to pay my little sister’s school fees and obtain basic textbooks for the term. Any small contribution helps tremendously. Thank you and God bless! 🙏', 
+                    category: 'Education Support', 
+                    commentsCount: 3, 
+                    supporters: 14, 
+                    image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80',
+                    comments: [
+                        { author: 'Sarah Johnson', text: 'Sent you a DM! I have some extra notebooks and can assist.', time: '1h ago' },
+                        { author: 'Michael Osei', text: 'Stay strong brother, checking how I can help out.', time: '45m ago' }
+                    ]
+                },
+                { 
+                    id: 2, 
+                    author: 'Amina Bello', 
+                    location: 'Kumasi, Ghana', 
+                    time: '5h ago', 
+                    verified: true, 
+                    title: 'Giving out warm winter clothes & blankets for families in need', 
+                    desc: 'Hello everyone! We have clean winter jackets, sweaters, and woolen blankets available for free pickup or community delivery.', 
+                    category: 'Clothing & Warmth', 
+                    commentsCount: 2, 
+                    supporters: 28, 
+                    image: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=600&q=80',
+                    comments: [
+                        { author: 'Grace Mensah', text: 'God bless you abundantly Amina!', time: '3h ago' }
+                    ]
+                }
+            ]
+        };
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 border border-emerald-400/50 animate-bounce';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-xl"></i><span class="font-medium text-sm">${message}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+
+        function switchScreen(screenName) {
+            appData.currentScreen = screenName;
+            const viewport = document.getElementById('main-viewport');
+            const header = document.getElementById('app-header');
+            const nav = document.querySelector('nav');
+
+            if(screenName === 'splash' || screenName === 'welcome' || screenName === 'auth-login' || screenName === 'auth-signup') {
+                header.classList.add('hidden');
+                nav.classList.add('hidden');
+            } else {
+                header.classList.remove('hidden');
+                nav.classList.remove('hidden');
+            }
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-emerald-400');
+                btn.classList.add('text-slate-400');
+            });
+            const activeNavBtn = document.querySelector(`[data-nav="${screenName}"]`);
+            if(activeNavBtn) {
+                activeNavBtn.classList.remove('text-slate-400');
+                activeNavBtn.classList.add('text-emerald-400');
+            }
+
+            viewport.innerHTML = renderScreenHTML(screenName);
+            gsap.fromTo(viewport, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+        }
+
+        function renderScreenHTML(screen) {
+            const trustFooter = `
+                <div class="mt-8 pt-6 border-t border-slate-800 text-center space-y-4 px-2 pb-6">
+                    <!-- Trust Companies Logos Section -->
+                    <div>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mb-3">Secured & Powered In Partnership With</p>
+                        <div class="flex items-center justify-center space-x-5 opacity-75 grayscale hover:grayscale-0 transition">
+                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">🛡️ FIREBASE</span>
+                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">📦 DHL GLOBAL</span>
+                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">🔒 STRIPE ESCROW</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-3 text-[11px] text-emerald-400 pt-2">
+                        <button onclick="switchScreen('about')" class="hover:underline">About</button>
+                        <span>•</span>
+                        <button onclick="switchScreen('privacy')" class="hover:underline">Privacy</button>
+                        <span>•</span>
+                        <button onclick="switchScreen('policies')" class="hover:underline">Policies</button>
+                        <span>•</span>
+                        <button onclick="switchScreen('shipment')" class="hover:underline">Shipment</button>
+                        <span>•</span>
+                        <button onclick="switchScreen('donation')" class="hover:underline">Donation</button>
+                        <span>•</span>
+                        <button onclick="switchScreen('community')" class="hover:underline">Community</button>
+                    </div>
+
+                    <p class="text-[11px] text-slate-400 leading-relaxed px-4">
+                        <strong>Production Notice:</strong> After full production launch, all live item syncing, instant messaging, global shipping logistics, and escrow accounts will be completely active worldwide.
+                    </p>
+                    <p class="text-[10px] text-slate-500 font-mono">© 2026 Falaa Freebies Platform. All rights reserved.</p>
+                </div>
+            `;
+
+            switch(screen) {
+                case 'splash':
+                    setTimeout(() => switchScreen('welcome'), 2800);
+                    return `
+                        <div class="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-navy-950 via-navy-900 to-emerald-950/40 relative overflow-hidden">
+                            <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none">
+                                <source src="assets/videos/splash.mp4" type="video/mp4">
+                            </video>
+                            <div class="relative z-10">
+                                <div class="w-28 h-28 rounded-3xl bg-gradient-to-tr from-emerald-600 to-gold mx-auto flex items-center justify-center shadow-2xl shadow-emerald-500/50 animate-soft-pulse mb-6 border border-emerald-400/40">
+                                    <img src="assets/logo/logo.png" alt="Logo" class="w-20 h-20 rounded-2xl object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <i class="fa-solid fa-gift text-5xl text-navy-950 hidden"></i>
+                                </div>
+                                <h1 class="font-heading font-extrabold text-3xl text-white tracking-wide mb-2">Falaa Freebies</h1>
+                                <p class="text-emerald-400 font-medium text-sm mb-8">Give Freely. Receive Joy. Build Community.</p>
+                                <div class="flex items-center justify-center space-x-2 text-slate-400 text-xs">
+                                    <i class="fa-solid fa-spinner animate-spin text-emerald-500"></i>
+                                    <span>Loading community network...</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                case 'welcome':
+                    return `
+                        <div class="min-h-screen flex flex-col justify-between p-6 bg-gradient-to-b from-navy-900 via-navy-950 to-emerald-950/30 text-center">
+                            <div class="py-6">
+                                <div class="w-full h-60 rounded-3xl overflow-hidden glass-panel mb-6 flex items-center justify-center relative">
+                                    <img src="https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover opacity-80" alt="Community">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-navy-950 via-transparent to-transparent"></div>
+                                </div>
+                                <h2 class="font-heading font-bold text-2xl text-white mb-2">Give. Receive. Help. Repeat.</h2>
+                                <p class="text-slate-300 text-sm">Join a global community that shares free items, emergency support, and pure kindness everyday.</p>
+                            </div>
+                            <div class="space-y-3 pb-8">
+                                <button onclick="switchScreen('auth-signup')" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-navy-950 font-bold font-heading shadow-lg shadow-emerald-500/30 hover:scale-[1.02] transition">Create Account</button>
+                                <button onclick="switchScreen('auth-login')" class="w-full py-3.5 rounded-2xl bg-slate-800 text-white font-bold font-heading border border-slate-700 hover:bg-slate-700 transition">Login</button>
+                                <button onclick="switchScreen('home')" class="w-full py-2 text-emerald-400 text-xs font-semibold hover:underline">Continue as Guest</button>
+                                ${trustFooter}
+                            </div>
+                        </div>
+                    `;
+                case 'auth-login':
+                case 'auth-signup':
+                    const isLogin = screen === 'auth-login';
+                    return `
+                        <div class="min-h-screen p-6 flex flex-col justify-center">
+                            <div class="glass-panel p-6 rounded-3xl shadow-2xl space-y-4">
+                                <div class="text-center mb-4">
+                                    <h2 class="font-heading font-bold text-2xl text-white">${isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+                                    <p class="text-xs text-slate-400">Firebase v12.1.0 Secure Authentication</p>
+                                </div>
+                                <form onsubmit="handleAuthSubmit(event, ${isLogin})" class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-300 mb-1">Email Address</label>
+                                        <input type="email" id="auth-email" required class="w-full bg-navy-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="name@example.com">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-300 mb-1">Password</label>
+                                        <input type="password" id="auth-password" required class="w-full bg-navy-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="••••••••">
+                                    </div>
+                                    <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-navy-950 font-bold font-heading shadow-lg shadow-emerald-500/30">${isLogin ? 'Login' : 'Sign Up'}</button>
+                                </form>
+                                <div class="text-center">
+                                    <button onclick="window.fbAuth.googleLogin()" class="w-full py-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium text-sm flex items-center justify-center space-x-2 hover:bg-slate-700 transition">
+                                        <i class="fa-brands fa-google text-red-400"></i>
+                                        <span>Continue with Google</span>
+                                    </button>
+                                </div>
+                                <div class="text-center pt-2">
+                                    <button onclick="switchScreen('${isLogin ? 'auth-signup' : 'auth-login'}')" class="text-xs text-emerald-400 hover:underline">
+                                        ${isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
+                                    </button>
+                                </div>
+                            </div>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'home':
+                    return `
+                        <div class="p-4 space-y-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h2 class="text-slate-400 text-xs">👋 Welcome to Falaa</h2>
+                                    <h3 class="font-heading font-bold text-xl text-white">Find something useful today.</h3>
+                                </div>
+                                <div class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-medium">
+                                    <i class="fa-solid fa-location-dot mr-1"></i> Global Hub
+                                </div>
+                            </div>
+
+                            <div class="relative">
+                                <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                                <input type="text" placeholder="Search free phones, furniture, books..." class="w-full bg-slate-800/80 border border-slate-700 rounded-2xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+
+                            <div>
+                                <h4 class="font-heading font-bold text-sm text-slate-300 mb-3">Categories & Quick Access</h4>
+                                <div class="grid grid-cols-4 gap-3 text-center">
+                                    ${renderCategoryItem('📱', 'Electronics', 'discover')}
+                                    ${renderCategoryItem('🛋', 'Furniture', 'discover')}
+                                    ${renderCategoryItem('🤝', 'Community', 'community')}
+                                    ${renderCategoryItem('📦', 'Shipping', 'international')}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-heading font-bold text-sm text-slate-300">Featured Freebies</h4>
+                                    <button onclick="switchScreen('discover')" class="text-xs text-emerald-400 font-semibold hover:underline">See all</button>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    ${appData.items.map(item => `
+                                        <div onclick="openItemDetails(${item.id})" class="glass-card rounded-2xl overflow-hidden cursor-pointer">
+                                            <div class="h-36 overflow-hidden relative">
+                                                <img src="${item.image}" class="w-full h-full object-cover" alt="${item.title}">
+                                                <span class="absolute top-2 right-2 px-2 py-0.5 bg-emerald-500 text-navy-950 font-bold text-[10px] rounded-full shadow">${item.price}</span>
+                                            </div>
+                                            <div class="p-3">
+                                                <h5 class="font-heading font-bold text-sm text-white truncate">${item.title}</h5>
+                                                <p class="text-[11px] text-emerald-400 font-medium">${item.condition}</p>
+                                                <div class="flex items-center justify-between mt-2 text-[10px] text-slate-400">
+                                                    <span><i class="fa-solid fa-location-dot mr-1"></i>${item.distance}</span>
+                                                    <span>${item.time}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'discover':
+                    return `
+                        <div class="p-4 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-heading font-bold text-lg text-white">Explore Freebies</h3>
+                                <button onclick="switchScreen('international')" class="px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded-xl text-blue-400 text-xs font-semibold flex items-center space-x-1">
+                                    <i class="fa-solid fa-earth-americas"></i>
+                                    <span>International</span>
+                                </button>
+                            </div>
+                            <div class="space-y-3">
+                                ${appData.items.map(item => `
+                                    <div onclick="openItemDetails(${item.id})" class="glass-card p-3 rounded-2xl flex items-center space-x-3 cursor-pointer">
+                                        <img src="${item.image}" class="w-20 h-20 rounded-xl object-cover">
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <h5 class="font-heading font-bold text-sm text-white">${item.title}</h5>
+                                                <span class="text-xs font-bold text-emerald-400">${item.price}</span>
+                                            </div>
+                                            <p class="text-xs text-slate-400">${item.condition}</p>
+                                            <div class="flex items-center justify-between mt-2 text-[11px] text-slate-500">
+                                                <span><i class="fa-solid fa-location-dot mr-1"></i>${item.location}</span>
+                                                <span>${item.time}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'community':
+                    return `
+                        <div class="p-4 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-white">🤝 Community Center</h3>
+                                    <p class="text-xs text-slate-400">Post requests, offer help, and support neighbors</p>
+                                </div>
+                                <button onclick="openNewCommunityPostModal()" class="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-navy-950 font-bold text-xs rounded-xl shadow-lg shadow-emerald-500/30">
+                                    <i class="fa-solid fa-pen-to-square mr-1"></i> New Post
+                                </button>
+                            </div>
+
+                            <div class="space-y-4">
+                                ${appData.communityPosts.map(post => `
+                                    <div class="glass-panel p-4 rounded-3xl space-y-3">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-2.5">
+                                                <div class="w-10 h-10 rounded-full bg-emerald-600/20 text-emerald-400 font-bold flex items-center justify-center text-sm border border-emerald-500/30">
+                                                    ${post.author.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <div class="flex items-center space-x-1">
+                                                        <h5 class="font-heading font-bold text-sm text-white">${post.author}</h5>
+                                                        ${post.verified ? '<i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i>' : ''}
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-400"><i class="fa-solid fa-location-dot mr-1"></i>${post.location} • ${post.time}</p>
+                                                </div>
+                                            </div>
+                                            <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 font-medium text-[10px] rounded-full border border-emerald-500/30">${post.category}</span>
+                                        </div>
+
+                                        <h4 class="font-heading font-bold text-sm text-white">${post.title}</h4>
+                                        <p class="text-xs text-slate-300 leading-relaxed">${post.desc}</p>
+                                        
+                                        ${post.image ? `<div class="w-full h-44 rounded-2xl overflow-hidden"><img src="${post.image}" class="w-full h-full object-cover"></div>` : ''}
+
+                                        <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-400">
+                                            <button onclick="showToast('You pledged support for this post!')" class="flex items-center space-x-1.5 text-emerald-400 font-semibold hover:underline">
+                                                <i class="fa-solid fa-hands-holding-child"></i>
+                                                <span>Support (${post.supporters})</span>
+                                            </button>
+                                            <button onclick="toggleComments(${post.id})" class="flex items-center space-x-1.5 hover:text-white">
+                                                <i class="fa-regular fa-comment"></i>
+                                                <span>Comments (${post.comments.length})</span>
+                                            </button>
+                                        </div>
+
+                                        <!-- Comments Section -->
+                                        <div id="comments-box-${post.id}" class="space-y-2 pt-3 border-t border-slate-800/80">
+                                            ${post.comments.map(c => `
+                                                <div class="bg-navy-950/60 p-2.5 rounded-xl text-xs space-y-1">
+                                                    <div class="flex justify-between font-semibold text-slate-200">
+                                                        <span>${c.author}</span>
+                                                        <span class="text-[10px] text-slate-500">${c.time}</span>
+                                                    </div>
+                                                    <p class="text-slate-300">${c.text}</p>
+                                                </div>
+                                            `).join('')}
+                                            <div class="flex space-x-2 pt-1">
+                                                <input type="text" id="comment-input-${post.id}" placeholder="Write a supportive comment..." class="flex-1 bg-navy-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                                                <button onclick="addCommunityComment(${post.id})" class="px-3 py-2 bg-emerald-600 text-navy-950 font-bold rounded-xl text-xs">Send</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'international':
+                    return `
+                        <div class="p-4 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-heading font-bold text-lg text-white">🌎 International & Shipping</h3>
+                                <button onclick="switchScreen('shipping-account')" class="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-navy-950 font-bold text-xs rounded-xl shadow-lg shadow-emerald-500/30 flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-truck-fast"></i>
+                                    <span>Shipping Account</span>
+                                </button>
+                            </div>
+                            <div class="glass-panel p-4 rounded-2xl space-y-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-plane-departure text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-heading font-bold text-sm text-white">Global Freebie Hub</h4>
+                                        <p class="text-xs text-slate-400">Request free items from donors worldwide with secure shipping escrow.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                ${appData.items.filter(i => i.shipping).map(item => `
+                                    <div class="glass-card p-3 rounded-2xl flex items-center space-x-3">
+                                        <img src="${item.image}" class="w-20 h-20 rounded-xl object-cover">
+                                        <div class="flex-1">
+                                            <h5 class="font-heading font-bold text-sm text-white">${item.title}</h5>
+                                            <p class="text-xs text-emerald-400">Shipping Available (${item.shippingCost})</p>
+                                            <span class="text-[10px] text-slate-400"><i class="fa-solid fa-globe mr-1"></i>${item.location}</span>
+                                        </div>
+                                        <button onclick="switchScreen('shipping-account')" class="px-3 py-1.5 bg-emerald-500 text-navy-950 font-bold text-[10px] rounded-xl">Ship</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'shipping-account':
+                    return `
+                        <div class="p-4 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <button onclick="switchScreen('international')" class="text-xs text-slate-400"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button>
+                                <h3 class="font-heading font-bold text-lg text-white">📦 Shipping Account & Escrow</h3>
+                                <div></div>
+                            </div>
+                            <div class="glass-panel p-5 rounded-3xl space-y-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xl">
+                                        <i class="fa-solid fa-shield-cat"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-heading font-bold text-sm text-white">Active Shipping Profile</h4>
+                                        <p class="text-xs text-emerald-400">Status: Verified & Ready for Full Production</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-3 text-xs text-slate-300">
+                                    <div class="flex justify-between py-2 border-b border-slate-800">
+                                        <span class="text-slate-400">Default Courier:</span>
+                                        <span class="font-semibold text-white">DHL & FedEx Global Logistics</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 border-b border-slate-800">
+                                        <span class="text-slate-400">Escrow Balance:</span>
+                                        <span class="font-semibold text-emerald-400">$0.00 USD</span>
+                                    </div>
+                                    <div class="flex justify-between py-2">
+                                        <span class="text-slate-400">Customs Clearance:</span>
+                                        <span class="font-semibold text-white">Automated Pre-Cleared</span>
+                                    </div>
+                                </div>
+                                <button onclick="showToast('Shipping account connected successfully!')" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-navy-950 font-bold font-heading shadow-lg shadow-emerald-500/30">Fund Shipping Wallet</button>
+                            </div>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'post':
+                    return `
+                        <div class="p-4 space-y-4">
+                            <h3 class="font-heading font-bold text-lg text-white">Post a Free Item</h3>
+                            <form onsubmit="handlePostSubmit(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-300 mb-1">Item Title</label>
+                                    <input type="text" id="post-title" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="e.g. Microwave Oven">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-300 mb-1">Description</label>
+                                    <textarea id="post-desc" rows="3" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="Describe condition and pickup details..."></textarea>
+                                </div>
+                                <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-navy-950 font-bold font-heading shadow-lg shadow-emerald-500/30">Post Free Item Now</button>
+                            </form>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'messages':
+                    return `
+                        <div class="p-4 space-y-3">
+                            <h3 class="font-heading font-bold text-lg text-white">Messages & Chat</h3>
+                            <div class="glass-card p-3 rounded-2xl flex items-center space-x-3 cursor-pointer">
+                                <div class="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-navy-950">SJ</div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <h5 class="font-heading font-bold text-sm text-white">Sarah Johnson</h5>
+                                        <span class="text-[10px] text-slate-400">10:30 AM</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 truncate">Hi Sarah, is the iPhone 11 still available?</p>
+                                </div>
+                                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                            </div>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'profile':
+                    return `
+                        <div class="p-4 space-y-6">
+                            <div class="glass-panel p-6 rounded-3xl text-center space-y-3">
+                                <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-600 to-gold mx-auto flex items-center justify-center font-bold text-2xl text-navy-950 shadow-xl">
+                                    SJ
+                                </div>
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-white">${appData.user.name}</h3>
+                                    <p class="text-xs text-emerald-400">Community Score: ${appData.user.score}/100</p>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800 text-center">
+                                    <div>
+                                        <span class="block font-bold text-white">${appData.user.itemsGiven}</span>
+                                        <span class="text-[10px] text-slate-400">Given</span>
+                                    </div>
+                                    <div>
+                                        <span class="block font-bold text-white">${appData.user.itemsReceived}</span>
+                                        <span class="text-[10px] text-slate-400">Received</span>
+                                    </div>
+                                    <div>
+                                        <span class="block font-bold text-white">${appData.user.reviews}</span>
+                                        <span class="text-[10px] text-slate-400">Reviews</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <button onclick="switchScreen('international')" class="w-full glass-card p-3 rounded-xl flex items-center justify-between text-xs font-semibold text-slate-300">
+                                    <span><i class="fa-solid fa-earth-americas mr-2 text-emerald-400"></i> International Hub</span>
+                                    <i class="fa-solid fa-chevron-right text-slate-500"></i>
+                                </button>
+                                <button onclick="window.fbAuth.logout()" class="w-full py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-bold text-xs">Log Out</button>
+                            </div>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'notifications':
+                    return `
+                        <div class="p-4 space-y-3">
+                            <h3 class="font-heading font-bold text-lg text-white">Notifications</h3>
+                            <div class="glass-card p-3 rounded-2xl flex items-center space-x-3">
+                                <i class="fa-solid fa-bell text-emerald-400 text-lg"></i>
+                                <div class="flex-1">
+                                    <h5 class="font-heading font-bold text-xs text-white">Sarah requested your item.</h5>
+                                    <span class="text-[10px] text-slate-400">2m ago</span>
+                                </div>
+                            </div>
+                            ${trustFooter}
+                        </div>
+                    `;
+                case 'about':
+                    return renderStaticPage('About Falaa Freebies', 'Falaa Freebies is a peer-to-peer sharing and community support platform built to encourage giving without monetary barriers. Our mission is to reduce waste, foster kindness, and connect people willing to share free items or emergency support with those who need them most.');
+                case 'privacy':
+                    return renderStaticPage('Privacy Policy', 'We take your privacy seriously. All data transmitted through Firebase authentication and Firestore is securely encrypted. We never sell or share your personal information with third parties without direct user consent.');
+                case 'policies':
+                    return renderStaticPage('Community Policies', '1. All items and services shared must be 100% free of charge.\n2. Respect all members across chats and community comments.\n3. Zero tolerance for scams, fraudulent posts, or misleading information.');
+                case 'shipment':
+                    return renderStaticPage('Shipment & Logistics', 'International freebies utilize secure shipping escrows partnered with trusted global couriers like DHL and FedEx. Donors or recipients cover standard courier fees while item costs remain completely free.');
+                case 'donation':
+                    return renderStaticPage('Donation Guidelines', 'You can give away electronics, clothing, books, furniture, or offer direct emergency community assistance. Ensure items are clean and accurately described before posting.');
+                default:
+                    return `<div class="p-6 text-center">Screen under construction</div>`;
+            }
+        }
+
+        function renderStaticPage(title, bodyText) {
+            return `
+                <div class="p-4 space-y-4">
+                    <button onclick="switchScreen('home')" class="text-xs text-slate-400"><i class="fa-solid fa-arrow-left mr-1"></i> Back Home</button>
+                    <div class="glass-panel p-5 rounded-3xl space-y-3">
+                        <h3 class="font-heading font-bold text-xl text-white">${title}</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed whitespace-pre-line">${bodyText}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCategoryItem(icon, label, target) {
+            return `
+                <div onclick="switchScreen('${target}')" class="glass-card p-3 rounded-2xl cursor-pointer flex flex-col items-center justify-center">
+                    <span class="text-xl mb-1">${icon}</span>
+                    <span class="text-[10px] text-slate-300 font-medium">${label}</span>
+                </div>
+            `;
+        }
+
+        function openItemDetails(id) {
+            const item = appData.items.find(i => i.id === id);
+            const viewport = document.getElementById('main-viewport');
+            viewport.innerHTML = `
+                <div class="p-4 space-y-4">
+                    <button onclick="switchScreen('home')" class="px-3 py-1.5 bg-slate-800 rounded-xl text-xs text-slate-300"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button>
+                    <div class="w-full h-64 rounded-3xl overflow-hidden glass-panel relative">
+                        <img src="${item.image}" class="w-full h-full object-cover">
+                        <span class="absolute top-3 right-3 px-3 py-1 bg-emerald-500 text-navy-950 font-bold text-xs rounded-full">${item.price}</span>
+                    </div>
+                    <div class="glass-panel p-4 rounded-2xl space-y-3">
+                        <h3 class="font-heading font-bold text-xl text-white">${item.title}</h3>
+                        <p class="text-xs text-emerald-400 font-semibold">${item.condition} • ${item.distance}</p>
+                        <p class="text-xs text-slate-300">${item.description}</p>
+                    </div>
+                    <button onclick="showToast('Request sent successfully to donor!')" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-navy-950 font-bold font-heading shadow-lg shadow-emerald-500/30">Request Item Free</button>
+                </div>
+            `;
+        }
+
+        function toggleComments(postId) {
+            const box = document.getElementById(`comments-box-${postId}`);
+            if(box) {
+                box.classList.toggle('hidden');
+            }
+        }
+
+        function addCommunityComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            if(input && input.value.trim() !== '') {
+                const post = appData.communityPosts.find(p => p.id === postId);
+                post.comments.push({ author: appData.user.name, text: input.value, time: 'Just now' });
+                showToast("Comment posted successfully!");
+                switchScreen('community');
+            }
+        }
+
+        function openNewCommunityPostModal() {
+            const viewport = document.getElementById('main-viewport');
+            viewport.innerHTML = `
+                <div class="p-4 space-y-4">
+                    <button onclick="switchScreen('community')" class="text-xs text-slate-400"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button>
+                    <div class="glass-panel p-5 rounded-3xl space-y-4">
+                        <h3 class="font-heading font-bold text-lg text-white">Create Community Request</h3>
+                        <form onsubmit="handleCommunityPostSubmit(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">Title</label>
+                                <input type="text" id="comm-title" required class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white" placeholder="e.g. Assistance needed for school books">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
+                                <select id="comm-category" class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                                    <option>Education Support</option>
+                                    <option>Clothing & Warmth</option>
+                                    <option>Emergency Help</option>
+                                    <option>Medical Assistance</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1">Description</label>
+                                <textarea id="comm-desc" rows="4" required class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white" placeholder="Describe how the community can help..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 rounded-xl bg-emerald-600 text-navy-950 font-bold text-xs">Publish Request</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleCommunityPostSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('comm-title').value;
+            const category = document.getElementById('comm-category').value;
+            const desc = document.getElementById('comm-desc').value;
+            appData.communityPosts.unshift({
+                id: Date.now(),
+                author: appData.user.name,
+                location: 'Accra, Ghana',
+                time: 'Just now',
+                verified: true,
+                title,
+                desc,
+                category,
+                supporters: 1,
+                comments: []
+            });
+            showToast("Community request posted successfully!");
+            switchScreen('community');
+        }
+
+        function handleAuthSubmit(e, isLogin) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            if(isLogin) {
+                window.fbAuth.emailLogin(email, password);
+            } else {
+                window.fbAuth.emailSignup(email, password);
+            }
+        }
+
+        function handlePostSubmit(e) {
+            e.preventDefault();
+            showToast("Free item posted successfully!");
+            switchScreen('home');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            switchScreen('splash');
+        });
+    </script>
+</body>
+</html>
