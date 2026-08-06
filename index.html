@@ -97,18 +97,11 @@
             background: #10b981;
             border-radius: 3px;
         }
-        @keyframes softPulse {
-            0%, 100% { transform: scale(1); opacity: 0.9; }
-            50% { transform: scale(1.03); opacity: 1; }
-        }
-        .animate-soft-pulse {
-            animation: softPulse 4s ease-in-out infinite;
-        }
     </style>
 </head>
 <body class="bg-navy-950 text-slate-100 min-h-screen relative selection:bg-emerald-500 selection:text-white">
 
-    <!-- Background Video Asset (Asset folder path: assets/videos/background.mp4) -->
+    <!-- Background Video Folder Asset: assets/videos/background.mp4 -->
     <video autoplay muted loop playsinline class="bg-video-container">
         <source src="assets/videos/background.mp4" type="video/mp4">
     </video>
@@ -122,7 +115,7 @@
         <!-- Top Header Navigation Bar -->
         <header id="app-header" class="sticky top-0 z-40 bg-navy-900/80 backdrop-blur-xl border-b border-slate-800 px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <!-- Logo Asset folder path: assets/logo/logo.png -->
+                <!-- Logo Folder Asset: assets/logo/logo.png -->
                 <img src="assets/logo/logo.png" alt="Falaa Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-emerald-500/30 border border-emerald-500/30" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 hidden items-center justify-center shadow-lg shadow-emerald-500/30 text-navy-950 font-bold text-xl">
                     <i class="fa-solid fa-gift"></i>
@@ -181,7 +174,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
 
@@ -205,9 +198,6 @@
             
             onAuthStateChanged(auth, (user) => {
                 currentUser = user;
-                if(user) {
-                    console.log("Firebase Authenticated:", user.email);
-                }
             });
         } catch(e) {
             console.log("Firebase initialized successfully with modular SDK v12.1.0.");
@@ -216,7 +206,7 @@
         window.fbAuth = {
             googleLogin: async () => {
                 const provider = new GoogleAuthProvider();
-                const res = await signInWithPopup(auth, provider);
+                await signInWithPopup(auth, provider);
                 showToast("Successfully logged in with Google!");
                 switchScreen('home');
             },
@@ -234,12 +224,6 @@
                 await signOut(auth);
                 showToast("Logged out successfully.");
                 switchScreen('welcome');
-            },
-            uploadFile: async (file) => {
-                if(!storage) return URL.createObjectURL(file);
-                const fileRef = ref(storage, `uploads/${Date.now()}_${file.name}`);
-                await uploadBytes(fileRef, file);
-                return await getDownloadURL(fileRef);
             }
         };
     </script>
@@ -327,12 +311,7 @@
                 score: 92,
                 itemsGiven: 32,
                 itemsReceived: 18,
-                reviews: 45,
-                badges: [
-                    { title: 'Community Hero', icon: 'fa-medal text-amber-400', desc: 'Awarded for extraordinary community contributions.' },
-                    { title: 'Top Giver', icon: 'fa-gift text-emerald-400', desc: 'Shared over 30 verified items.' },
-                    { title: 'Trusted Member', icon: 'fa-shield-halved text-blue-400', desc: '100% verified pickup records.' }
-                ]
+                reviews: 45
             },
             items: [
                 { id: 1, title: 'iPhone 11 (64GB)', category: 'Electronics', condition: 'Excellent Condition', distance: '2 km away', time: '2 hours ago', price: 'FREE', image: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=600&q=80', description: 'iPhone 11 64GB: Very clean and works perfectly. Battery health 87%.', location: 'Accra, Ghana', donor: 'Sarah Johnson' },
@@ -350,28 +329,11 @@
                     title: 'Need help for my little sister’s school fees & books.', 
                     desc: 'I am seeking support to pay my little sister’s school fees and obtain basic textbooks for the term. Any small contribution helps tremendously. Thank you and God bless! 🙏', 
                     category: 'Education Support', 
-                    commentsCount: 3, 
                     supporters: 14, 
                     image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80',
                     comments: [
                         { author: 'Sarah Johnson', text: 'Sent you a DM! I have some extra notebooks and can assist.', time: '1h ago' },
                         { author: 'Michael Osei', text: 'Stay strong brother, checking how I can help out.', time: '45m ago' }
-                    ]
-                },
-                { 
-                    id: 2, 
-                    author: 'Amina Bello', 
-                    location: 'Kumasi, Ghana', 
-                    time: '5h ago', 
-                    verified: true, 
-                    title: 'Giving out warm winter clothes & blankets for families in need', 
-                    desc: 'Hello everyone! We have clean winter jackets, sweaters, and woolen blankets available for free pickup or community delivery.', 
-                    category: 'Clothing & Warmth', 
-                    commentsCount: 2, 
-                    supporters: 28, 
-                    image: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=600&q=80',
-                    comments: [
-                        { author: 'Grace Mensah', text: 'God bless you abundantly Amina!', time: '3h ago' }
                     ]
                 }
             ]
@@ -416,13 +378,13 @@
         function renderScreenHTML(screen) {
             const trustFooter = `
                 <div class="mt-8 pt-6 border-t border-slate-800 text-center space-y-4 px-2 pb-6">
-                    <!-- Trust Companies Logos Section -->
+                    <!-- Trust Companies Logos Folder Asset Section -->
                     <div>
                         <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mb-3">Secured & Powered In Partnership With</p>
                         <div class="flex items-center justify-center space-x-5 opacity-75 grayscale hover:grayscale-0 transition">
-                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">🛡️ FIREBASE</span>
-                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">📦 DHL GLOBAL</span>
-                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">🔒 STRIPE ESCROW</span>
+                            <img src="assets/trust/firebase.png" alt="Firebase" class="h-6 object-contain" onerror="this.outerHTML='<span class=\'text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded\'>🛡️ FIREBASE</span>'">
+                            <img src="assets/trust/dhl.png" alt="DHL" class="h-6 object-contain" onerror="this.outerHTML='<span class=\'text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded\'>📦 DHL GLOBAL</span>'">
+                            <img src="assets/trust/stripe.png" alt="Stripe" class="h-6 object-contain" onerror="this.outerHTML='<span class=\'text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded\'>🔒 STRIPE ESCROW</span>'">
                         </div>
                     </div>
 
@@ -449,22 +411,24 @@
 
             switch(screen) {
                 case 'splash':
-                    setTimeout(() => switchScreen('welcome'), 2800);
+                    setTimeout(() => switchScreen('welcome'), 3000);
                     return `
                         <div class="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-navy-950 via-navy-900 to-emerald-950/40 relative overflow-hidden">
-                            <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none">
-                                <source src="assets/videos/splash.mp4" type="video/mp4">
+                            <!-- Splash Video/Animation Folder Asset: assets/splash/splash.mp4 -->
+                            <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" onerror="this.style.display='none'">
+                                <source src="assets/splash/splash.mp4" type="video/mp4">
                             </video>
-                            <div class="relative z-10">
-                                <div class="w-28 h-28 rounded-3xl bg-gradient-to-tr from-emerald-600 to-gold mx-auto flex items-center justify-center shadow-2xl shadow-emerald-500/50 animate-soft-pulse mb-6 border border-emerald-400/40">
-                                    <img src="assets/logo/logo.png" alt="Logo" class="w-20 h-20 rounded-2xl object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                    <i class="fa-solid fa-gift text-5xl text-navy-950 hidden"></i>
+                            <div class="relative z-10 space-y-4">
+                                <div class="w-28 h-28 rounded-3xl mx-auto flex items-center justify-center shadow-2xl mb-2">
+                                    <!-- Logo Folder Asset: assets/logo/logo.png -->
+                                    <img src="assets/logo/logo.png" alt="Logo" class="w-24 h-24 rounded-2xl object-cover border border-emerald-500/30" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <i class="fa-solid fa-gift text-5xl text-emerald-400 hidden"></i>
                                 </div>
-                                <h1 class="font-heading font-extrabold text-3xl text-white tracking-wide mb-2">Falaa Freebies</h1>
-                                <p class="text-emerald-400 font-medium text-sm mb-8">Give Freely. Receive Joy. Build Community.</p>
-                                <div class="flex items-center justify-center space-x-2 text-slate-400 text-xs">
+                                <h1 class="font-heading font-extrabold text-3xl text-white tracking-wide">Falaa Freebies</h1>
+                                <p class="text-emerald-400 font-medium text-sm">Give Freely. Receive Joy.</p>
+                                <div class="flex items-center justify-center space-x-2 text-slate-400 text-xs pt-4">
                                     <i class="fa-solid fa-spinner animate-spin text-emerald-500"></i>
-                                    <span>Loading community network...</span>
+                                    <span>Loading assets...</span>
                                 </div>
                             </div>
                         </div>
@@ -658,7 +622,6 @@
                                             </button>
                                         </div>
 
-                                        <!-- Comments Section -->
                                         <div id="comments-box-${post.id}" class="space-y-2 pt-3 border-t border-slate-800/80">
                                             ${post.comments.map(c => `
                                                 <div class="bg-navy-950/60 p-2.5 rounded-xl text-xs space-y-1">
