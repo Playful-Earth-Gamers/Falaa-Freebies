@@ -325,8 +325,8 @@ from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
         const appData = {
             currentScreen: 'splash',
             user: {
-                name: 'Sarah Johnson',
-                email: 'sarah.j@example.com',
+                name: 'Mauzi Essel Tengey',
+                email: 'Mauzi.j@example.com',
                 score: 92,
                 itemsGiven: 32,
                 itemsReceived: 18,
@@ -418,16 +418,33 @@ from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
         function renderScreenHTML(screen) {
             const trustFooter = `
-                <div class="mt-8 pt-6 border-t border-slate-800 text-center space-y-4 px-2 pb-6">
-                    <!-- Trust Companies Logos Section -->
-                    <div>
-                        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mb-3">Secured & Powered In Partnership With</p>
-                        <div class="flex items-center justify-center space-x-5 opacity-75 grayscale hover:grayscale-0 transition">
-                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">🛡️ FIREBASE</span>
-                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">📦 DHL GLOBAL</span>
-                            <span class="text-xs font-bold font-mono text-slate-300 bg-slate-800 px-2 py-1 rounded">🔒 STRIPE ESCROW</span>
-                        </div>
-                    </div>
+                <div class="flex items-center justify-center gap-5 opacity-80 grayscale hover:grayscale-0 transition">
+
+    <div class="h-8 w-20 flex items-center justify-center">
+        <img
+            src="assets/logos/firebase.jpg"
+            alt="Firebase"
+            class="max-h-8 max-w-full object-contain"
+        >
+    </div>
+
+    <div class="h-8 w-20 flex items-center justify-center">
+        <img
+            src="assets/logos/dhl.jpg"
+            alt="DHL"
+            class="max-h-8 max-w-full object-contain"
+        >
+    </div>
+
+    <div class="h-8 w-20 flex items-center justify-center">
+        <img
+            src="assets/logos/stripe.jpg"
+            alt="Stripe"
+            class="max-h-8 max-w-full object-contain"
+        >
+    </div>
+
+</div>
 
                     <div class="flex flex-wrap justify-center gap-3 text-[11px] text-emerald-400 pt-2">
                         <button onclick="switchScreen('about')" class="hover:underline">About</button>
