@@ -109,9 +109,16 @@
 <body class="bg-navy-950 text-slate-100 min-h-screen relative selection:bg-emerald-500 selection:text-white">
 
     <!-- Background Video Asset (Asset folder path: assets/videos/background.mp4) -->
-    <video autoplay muted loop playsinline class="bg-video-container">
-        <source src="assets/videos/background.mp4" type="video/mp4">
-    </video>
+    <video
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+    class="bg-video-container"
+>
+    <source src="assets/videos/background.mp4" type="video/mp4">
+</video>
 
     <!-- 3D Background Interactive Canvas -->
     <canvas id="bg-3d-canvas"></canvas>
@@ -418,7 +425,7 @@ from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
         function renderScreenHTML(screen) {
             const trustFooter = `
-                <div class="flex items-center justify-center gap-5 opacity-80 grayscale hover:grayscale-0 transition">
+                <div class="flex items-center justify-center gap-5 opacity-100">
 
     <div class="h-8 w-20 flex items-center justify-center">
         <img
@@ -443,6 +450,8 @@ from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
             class="max-h-8 max-w-full object-contain"
         >
     </div>
+
+</div>
 
 </div>
 
@@ -477,7 +486,7 @@ from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
                             </video>
                             <div class="relative z-10">
                                 <div class="w-28 h-28 rounded-3xl bg-gradient-to-tr from-emerald-600 to-gold mx-auto flex items-center justify-center shadow-2xl shadow-emerald-500/50 animate-soft-pulse mb-6 border border-emerald-400/40">
-                                    <img src="assets/logo/logo.png" alt="Logo" class="w-20 h-20 rounded-2xl object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <img src="assets/logo/logo.jpg" alt="Logo" class="w-20 h-20 rounded-2xl object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                                     <i class="fa-solid fa-gift text-5xl text-navy-950 hidden"></i>
                                 </div>
                                 <h1 class="font-heading font-extrabold text-3xl text-white tracking-wide mb-2">Falaa Freebies</h1>
